@@ -5,7 +5,7 @@ import { UpdateMediaDto } from './dto/update-media.dto';
 @Injectable()
 export class MediasService {
   create(createMediaDto: CreateMediaDto) {
-    return 'This action adds a new media';
+    throw new Error('Conflict')
   }
 
   findAll() {

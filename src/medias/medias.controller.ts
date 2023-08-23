@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { MediasService } from './medias.service';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
@@ -9,7 +9,12 @@ export class MediasController {
 
   @Post()
   create(@Body() createMediaDto: CreateMediaDto) {
-    return this.mediasService.create(createMediaDto);
+    try {
+      return this.mediasService.create(createMediaDto);
+      
+    } catch (error) {
+      throw new HttpException('Conflict', HttpStatus.CONFLICT)
+    }
   }
 
   @Get()
