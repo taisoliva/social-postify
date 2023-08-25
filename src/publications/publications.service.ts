@@ -1,26 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
+import { PublicationsRepository } from './publications.repository';
+import { MediasService } from 'src/medias/medias.service';
+import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class PublicationsService {
-  create(createPublicationDto: CreatePublicationDto) {
-    return 'This action adds a new publication';
+
+  constructor(private readonly publicationsRepository: PublicationsRepository, private mediasService: MediasService, private postsServices: PostsService) { }
+
+  async findId(id: number){
+    const result = await this.publicationsRepository.findOne(id)
+    if(!result){
+      throw new NotFoundException(`Not Found Publication ${id}`)
+    }
+    return result
+  }
+  
+  
+  async create(createPublicationDto: CreatePublicationDto) {
+    await this.mediasService.findOne(createPublicationDto.mediaId)
+    await this.postsServices.findOne(createPublicationDto.postId)
+
+    return this.publicationsRepository.create(createPublicationDto)
   }
 
-  findAll() {
-    return `This action returns all publications`;
+  async findAll() {
+    const result = await this.publicationsRepository.findAll()
+    return result
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} publication`;
+  async findOne(id: number) {
+    const data = await this.findId(id)
+    return [data]
   }
 
-  update(id: number, updatePublicationDto: UpdatePublicationDto) {
-    return `This action updates a #${id} publication`;
+  async update(id: number, updatePublicationDto: UpdatePublicationDto) {
+    await this.findId(id)
+    await this.mediasService.findOne(updatePublicationDto.mediaId)
+    await this.postsServices.findOne(updatePublicationDto.postId)
+    const result = await this.publicationsRepository.update(id,updatePublicationDto)
+    return [result]
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} publication`;
+  async remove(id: number) {
+    await this.findId(id)
+    return this.publicationsRepository.remove(id)
   }
 }
