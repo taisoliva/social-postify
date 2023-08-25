@@ -1,5 +1,5 @@
 import { Optional } from "@nestjs/common";
-import { IsNotEmpty, IsString, IsUrl } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class CreatePostDto {
     
@@ -11,8 +11,8 @@ export class CreatePostDto {
     @IsNotEmpty()
     text : string
 
-    @Optional()
     @IsString()
     @IsUrl()
+    @IsOptional()
     image: string
 }
