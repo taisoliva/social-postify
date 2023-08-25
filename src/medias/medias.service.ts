@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException, Param } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException, Param } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { MediasRepository } from './medias.repository';
@@ -49,6 +49,10 @@ export class MediasService {
 
   async remove(id: number) {
     await this.FindId(id)
-    return await this.mediasRepository.remove(id)
+    const result = await this.mediasRepository.MediaIdPublications(id)
+    if(result.publications.length !== 0){
+      throw new ForbiddenException(`Media is being used`)
+    }
+    return await this.mediasRepository.remove(id) 
   }
 }

@@ -18,7 +18,6 @@ export class PublicationsService {
     return result
   }
   
-  
   async create(createPublicationDto: CreatePublicationDto) {
     await this.mediasService.findOne(createPublicationDto.mediaId)
     await this.postsServices.findOne(createPublicationDto.postId)
