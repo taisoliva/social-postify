@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsRepository } from './posts.repository';
@@ -37,6 +37,10 @@ export class PostsService {
 
   async remove(id: number) {
     await this.FindId(id)
-    return this.postsRepository.remove(id);
+    const result = await this.postsRepository.PostIdPublications(id)
+    if(result.publications.length !== 0){
+      throw new ForbiddenException(`Post is being used`)
+    }
+    return await this.postsRepository.remove(id) 
   }
 }

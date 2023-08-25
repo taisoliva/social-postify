@@ -38,4 +38,13 @@ export class PostsRepository {
       where:{id}
     })
   }
+
+  async PostIdPublications(id:number){
+    return await this.prisma.posts.findFirst({
+      where:{id},
+      include:{
+        publications:true
+      }
+    })
+  }
 }
