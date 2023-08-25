@@ -44,4 +44,13 @@ export class MediasRepository {
       where:{id}
     })
   }
+
+  async MediaIdPublications(id:number){
+    return await this.prisma.medias.findFirst({
+      where:{id},
+      include:{
+        publications:true
+      }
+    })
+  }
 }
