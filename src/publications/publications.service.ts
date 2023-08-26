@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { PublicationsRepository } from './publications.repository';
@@ -17,6 +17,13 @@ export class PublicationsService {
     }
     return result
   }
+
+  async isPublished(id:number){
+    const result = await this.publicationsRepository.findOne(id)
+    if(result.date < new Date()){
+     throw new ForbiddenException(`Published! You can't edit`)
+    } 
+  }
   
   async create(createPublicationDto: CreatePublicationDto) {
     await this.mediasService.findOne(createPublicationDto.mediaId)
@@ -25,8 +32,8 @@ export class PublicationsService {
     return this.publicationsRepository.create(createPublicationDto)
   }
 
-  async findAll() {
-    const result = await this.publicationsRepository.findAll()
+  async findAll(params?:object) {
+    const result = await this.publicationsRepository.findAll(params)
     return result
   }
 
@@ -39,6 +46,7 @@ export class PublicationsService {
     await this.findId(id)
     await this.mediasService.findOne(updatePublicationDto.mediaId)
     await this.postsServices.findOne(updatePublicationDto.postId)
+    await this.isPublished(id)
     const result = await this.publicationsRepository.update(id,updatePublicationDto)
     return [result]
   }
