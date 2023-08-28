@@ -38,6 +38,8 @@ export class MediasService {
   async update(id: number, updateMediaDto: UpdateMediaDto) {
     await this.FindId(id)
 
+   
+
     if (await this.mediasRepository.lookingForIgual(updateMediaDto.title, updateMediaDto.username)) {
       throw new ConflictException(`Item already exists ${updateMediaDto.title} and ${updateMediaDto.username}`)
     }
